@@ -8,11 +8,9 @@ class MealItem extends StatelessWidget{
 
   MealItem({super.key,
   required this.meal,
-  required this.onToggleFavourite,
   });
 
   final Meal meal;
-  final void Function(Meal meal) onToggleFavourite;
 
   String get complexityText {
     return meal.complexity.name[0].toUpperCase() + meal.complexity.name.substring(1);
@@ -34,18 +32,21 @@ class MealItem extends StatelessWidget{
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (ctx) => MealDetails(meal: meal,onToggleFavourite: onToggleFavourite,)),
+            MaterialPageRoute(builder: (ctx) => MealDetails(meal: meal,)),
           );
         },
         child: Stack(
           children: [
-            FadeInImage(
-              placeholder: MemoryImage(kTransparentImage),
-               image: NetworkImage(meal.imageUrl),
-               fit: BoxFit.cover,
-               height: 200,
-               width: double.infinity ,
-               ),
+            Hero(
+              tag: meal.id,
+              child: FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                 image: NetworkImage(meal.imageUrl),
+                 fit: BoxFit.cover,
+                 height: 200,
+                 width: double.infinity ,
+                 ),
+            ),
                Positioned(
                 bottom: 0,
                 left: 0,

@@ -1,78 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:mealapp/main_drawer.dart';
 import 'package:mealapp/tabs.dart';
+import 'package:mealapp/filters_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum Filters {
-  glutenFree,
-  LactoseFree,
-  vegetarian,
-  vegan,
-}
 
-class FiltersScreen extends StatefulWidget{
 
-  FiltersScreen({super.key,
-  required this.cuurentFilters,
-  });
+class FiltersScreen extends ConsumerWidget{
 
-  final Map<Filters,bool> cuurentFilters;
+  FiltersScreen({super.key,});
+
+
 
 
   @override
-  State<StatefulWidget> createState() {
-    return _FilterScreenState();
-  }
+  Widget build(BuildContext context,WidgetRef ref) {
 
-
-}
-
-class _FilterScreenState extends State<FiltersScreen>{
-
-  var _GlutenFreeFilterSet = false;
-  var _LactoseFreeFilterSet = false;
-  var _VegetarianFilterSet = false;
-  var _VeganFilterSet = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _GlutenFreeFilterSet = widget.cuurentFilters[Filters.glutenFree]!;
-    _LactoseFreeFilterSet = widget.cuurentFilters[Filters.LactoseFree]!;
-    _VegetarianFilterSet = widget.cuurentFilters[Filters.vegetarian]!;
-    _VeganFilterSet = widget.cuurentFilters[Filters.vegan]!;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+    final activeFilter = ref.watch(filtersProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Filters"),
       ),
-      // drawer: MainDrawer(onSelecScreen: (identifier){
-      //   Navigator.of(context).pop();
-      //   if(identifier=="meal"){
-      //     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: ((ctx) => TabScreen())) );
-      //   }
-      // }),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop({
-            Filters.LactoseFree : _LactoseFreeFilterSet,
-            Filters.glutenFree : _GlutenFreeFilterSet,
-            Filters.vegetarian : _VegetarianFilterSet,
-            Filters.vegan : _VeganFilterSet,
-          });
-          return false;
-        },
-        child: Column(
+      body:
+        Column(
           children: [ 
             SwitchListTile(
-              value: _GlutenFreeFilterSet,
+              value: activeFilter[Filters.glutenFree]!,
              onChanged: (isChecked){
-              setState(() {
-                _GlutenFreeFilterSet = isChecked; 
-              });
+              ref.read(filtersProvider.notifier).setFilter(Filters.glutenFree, isChecked);
              },
             title: Text("Gluten-Free",
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -90,11 +46,9 @@ class _FilterScreenState extends State<FiltersScreen>{
              
             ),
             SwitchListTile(
-              value: _LactoseFreeFilterSet,
+              value: activeFilter[Filters.LactoseFree]!,
              onChanged: (isChecked){
-              setState(() {
-                _LactoseFreeFilterSet = isChecked; 
-              });
+              ref.read(filtersProvider.notifier).setFilter(Filters.LactoseFree, isChecked);
              },
             title: Text("Lactose-Free",
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -112,11 +66,9 @@ class _FilterScreenState extends State<FiltersScreen>{
              
             ),
             SwitchListTile(
-              value: _VegetarianFilterSet,
+              value: activeFilter[Filters.vegetarian]!,
              onChanged: (isChecked){
-              setState(() {
-                _VegetarianFilterSet = isChecked; 
-              });
+              ref.read(filtersProvider.notifier).setFilter(Filters.vegetarian, isChecked);
              },
             title: Text("Vegetarian",
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -134,11 +86,9 @@ class _FilterScreenState extends State<FiltersScreen>{
              
             ),
             SwitchListTile(
-              value: _VeganFilterSet,
+              value: activeFilter[Filters.vegan]!,
              onChanged: (isChecked){
-              setState(() {
-                _VeganFilterSet = isChecked; 
-              });
+              ref.read(filtersProvider.notifier).setFilter(Filters.vegan, isChecked);
              },
             title: Text("Vegan",
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -157,7 +107,6 @@ class _FilterScreenState extends State<FiltersScreen>{
             ),
           ],
         ),
-      ),
     );
   }
 }
